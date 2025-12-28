@@ -1,0 +1,45 @@
+{
+  "title": "Roblox Studio Work",
+  "sections": [
+    {
+      "name": "Combat systems",
+      "description": "Melee, hitboxes, combos, damage feedback, and polish.",
+      "items": [
+        {
+          "type": "image",
+          "title": "Combo + hit feedback",
+          "src": "./assets/combat_01.png",
+          "note": "Lightweight combo chain with clean feedback.",
+          "tags": ["Combat", "UI", "VFX"]
+        },
+        {
+          "type": "video",
+          "title": "Sword system demo",
+          "src": "./assets/combat_demo.mp4",
+          "note": "Short clip showing timing + impacts.",
+          "tags": ["Combat", "Animation"]
+        },
+        {
+          "type": "youtube",
+          "title": "Combat showcase (YouTube)",
+          "src": "https://www.youtube.com/watch?v=VIDEO_ID",
+          "note": "Embed from YouTube link.",
+          "tags": ["Combat", "Showcase"]
+        }
+      ]
+    },
+    {
+      "name": "UI systems",
+      "description": "Menus, inventories, shops, and HUD work.",
+      "items": [
+        {
+          "type": "image",
+          "title": "Inventory layout",
+          "src": "./assets/ui_inventory.png",
+          "note": "Grid layout with clean spacing and typography.",
+          "tags": ["UI", "Inventory"]
+        }
+      ]
+    }
+  ]
+}
