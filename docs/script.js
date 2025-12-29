@@ -1,15 +1,14 @@
 const sections = [
   {
-    title: "Combat Systems",
+    title: "Simple Systems",
     items: [
-      { type: "video", src: "assets/project1.png" },
       { type: "image", src: "assets/project1.png" }
     ]
   },
   {
-    title: "UI Systems",
+    title: "Big systems",
     items: [
-      { type: "video", src: "assets/ui/inventory.mp4" }
+      { type: "image", src: "assets/project2.png" }
     ]
   },
   {
@@ -17,8 +16,15 @@ const sections = [
     items: [
       { type: "video", src: "assets/movement/dash.mp4" }
     ]
+  },
+  {
+    title: "Combat systems",
+    items: [
+      { type: "video", src: "assets/movement/dash.mp4" }
+    ]
   }
 ];
+
 const portfolio = document.getElementById("portfolio");
 
 sections.forEach(section => {
