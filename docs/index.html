@@ -2,194 +2,493 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Past Work</title>
+  <title>Apex Covenant Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    /* --- CSS VARIABLES & RESET --- */
+    :root {
+      --bg: #0b0f1a;
+      --sidebar-bg: #05080f;
+      --card-bg: #131825;
+      --accent: #3b82f6; /* Azure Blue */
+      --accent-glow: rgba(59, 130, 246, 0.4);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+      --font-stack: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+    
     body {
-      margin: 0;
-      background: #0b0f1a;
-      color: #fff;
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .hero {
-      padding: 80px 20px 40px;
-      text-align: center;
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: 80px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 30px;
+      transition: width 0.3s ease;
+      z-index: 100;
     }
 
-    .hero h1 {
-      font-size: 48px;
-      margin: 0;
-    }
+    .sidebar:hover { width: 240px; }
 
-    .hero p {
-      opacity: 0.7;
-      margin-top: 10px;
-      margin-bottom: 30px;
-    }
-
-    #search {
-      padding: 12px 20px;
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-      font-size: 16px;
+    .nav-btn {
       width: 100%;
-      max-width: 400px;
-      outline: none;
-      transition: border-color 0.2s;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 26px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
-    #search:focus {
-      border-color: rgba(255, 255, 255, 0.6);
+    .nav-btn:hover, .nav-btn.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
     }
 
-    section {
-      max-width: 1200px;
-      margin: auto;
-      padding: 40px 20px;
+    .nav-btn.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      box-shadow: 0 0 15px var(--accent);
     }
 
-    section h2 {
-      font-size: 30px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
-      padding-bottom: 10px;
+    .nav-btn svg {
+      min-width: 24px;
+      margin-right: 20px;
     }
 
+    .nav-text {
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar:hover .nav-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* --- MAIN CONTENT AREA --- */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+    }
+
+    header {
+      margin-bottom: 50px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    h1 { font-size: 3rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 10px; }
+    p.subtitle { color: var(--text-muted); font-size: 1.1rem; }
+
+    /* --- GRIDS & CARDS --- */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      padding-bottom: 100px;
     }
 
-    video,
-    img,
-    iframe {
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      animation: slideUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px var(--accent-glow);
+    }
+
+    .media-container {
       width: 100%;
-      border-radius: 16px;
+      aspect-ratio: 16/9;
       background: #000;
-      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .media-container img, 
+    .media-container video, 
+    .media-container iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
+      border: none;
+    }
+
+    .card-info { padding: 20px; }
+    
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      color: var(--text-muted);
+    }
+
+    /* --- STORE SPECIFIC --- */
+    .price-tag {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+
+    .btn-buy {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .btn-buy:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* --- DASHBOARD --- */
+    .dashboard-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); }
+    
+    input, select {
+      width: 100%;
+      padding: 14px;
+      background: #0b0f1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus { border-color: var(--accent); }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
     }
     
-    /* Force 16:9 Aspect Ratio for YouTube */
-    iframe {
-      aspect-ratio: 16 / 9;
-      border: none;
-      height: auto; 
-    }
+    .btn-submit:hover { opacity: 0.9; transform: scale(0.98); }
 
-    video:hover,
-    img:hover,
-    iframe:hover {
-      transform: scale(1.02);
+    /* --- ANIMATIONS --- */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { 
+      from { opacity: 0; transform: translateY(20px); } 
+      to { opacity: 1; transform: translateY(0); } 
     }
+    
+    /* Utilities */
+    .hidden { display: none; }
+
   </style>
 </head>
 <body>
 
-<header class="hero">
-  <h1>Past Work</h1>
-  <p>Roblox Studio systems and mechanics I’ve built</p>
-  <input type="text" id="search" placeholder="Search systems..." />
-</header>
+  <nav class="sidebar">
+    <div class="nav-btn active" onclick="switchTab('work', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      </svg>
+      <span class="nav-text">Past Work</span>
+    </div>
 
-<main id="portfolio"></main>
+    <div class="nav-btn" onclick="switchTab('store', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <span class="nav-text">Store</span>
+    </div>
+
+    <div class="nav-btn" onclick="switchTab('dashboard', this)" style="margin-top: auto; margin-bottom: 20px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="12" y1="8" x2="12" y2="16"></line>
+        <line x1="8" y1="12" x2="16" y2="12"></line>
+      </svg>
+      <span class="nav-text">Dashboard</span>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    
+    <header id="page-header">
+      <h1 id="page-title">Past Work</h1>
+      <p class="subtitle" id="page-subtitle">Systems and mechanics I've built.</p>
+      <input type="text" id="search" placeholder="Search..." 
+             style="margin-top:20px; max-width:400px; display:block;" oninput="handleSearch(this.value)">
+    </header>
+
+    <div id="content-grid" class="grid"></div>
+
+    <div id="dashboard-panel" class="dashboard-panel hidden">
+      <h2 style="margin-bottom:20px;">Add New Content</h2>
+      
+      <div class="form-group">
+        <label>Section</label>
+        <select id="dash-section" onchange="togglePriceInput()">
+          <option value="work">Past Work</option>
+          <option value="store">Store Product</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="dash-title" placeholder="e.g., Advanced Combat System">
+      </div>
+
+      <div class="form-group">
+        <label>Media Type</label>
+        <select id="dash-type">
+          <option value="youtube">YouTube Video</option>
+          <option value="video">Uploaded Video (MP4)</option>
+          <option value="image">Image</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Source / Link</label>
+        <input type="text" id="dash-src" placeholder="Paste YouTube Link or Image URL">
+        <p style="font-size:0.8rem; color:#666; margin-top:5px;">
+          For YouTube, use the full link. For uploads, we'll convert locally.
+        </p>
+      </div>
+
+      <div class="form-group hidden" id="price-group">
+        <label>Price ($)</label>
+        <input type="number" id="dash-price" placeholder="25">
+      </div>
+
+      <button class="btn-submit" onclick="addItem()">Add to Site</button>
+    </div>
+
+  </main>
 
 <script>
-const sections = [
-  {
-    title: "Simple Systems",
-    items: [
-      { type: "image", src: "assets/project1.png" }
-    ]
-  },
-  {
-    title: "Big systems",
-    items: [
-      { type: "image", src: "assets/project2.png" }
-    ]
-  },
-  {
-    title: "Movement Systems",
-    items: [
-      { type: "video", src: "assets/movement/dash.mp4" }
-    ]
-  },
-  {
-    title: "Combat systems",
-    items: [
-      // CRITICAL: The type must be "youtube", NOT "video"
-      { type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" } 
-    ]
-  }
+// --- INITIAL DATA (Default) ---
+const defaultWork = [
+  { title: "Simple Systems", type: "image", src: "assets/project1.png" },
+  { title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
+  { title: "Dash Mechanic", type: "video", src: "assets/movement/dash.mp4" },
+  { title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
 ];
 
-const portfolio = document.getElementById("portfolio");
-const searchInput = document.getElementById("search");
+const defaultStore = [
+  { title: "Rank Management GUI", type: "image", src: "assets/project1.png", price: 15 },
+  { title: "Clan War System", type: "image", src: "assets/project2.png", price: 40 }
+];
 
-function renderPortfolio(filterText = "") {
-  portfolio.innerHTML = "";
+// Load from LocalStorage or use Defaults
+let workData = JSON.parse(localStorage.getItem('myWorkData')) || defaultWork;
+let storeData = JSON.parse(localStorage.getItem('myStoreData')) || defaultStore;
+let currentTab = 'work';
+
+// --- RENDER FUNCTION ---
+const grid = document.getElementById('content-grid');
+const dashPanel = document.getElementById('dashboard-panel');
+const pageTitle = document.getElementById('page-title');
+const pageSub = document.getElementById('page-subtitle');
+const searchInput = document.getElementById('search');
+
+function render(filter = "") {
+  grid.innerHTML = "";
   
-  const term = filterText.toLowerCase();
+  let dataToRender = currentTab === 'work' ? workData : storeData;
+  
+  // Filter
+  const term = filter.toLowerCase();
+  const filtered = dataToRender.filter(item => item.title.toLowerCase().includes(term));
 
-  sections.forEach(section => {
-    if (section.title.toLowerCase().includes(term)) {
-      const sec = document.createElement("section");
-      sec.innerHTML = `<h2>${section.title}</h2>`;
+  filtered.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = "card";
+    card.style.animationDelay = `${index * 0.1}s`;
 
-      const grid = document.createElement("div");
-      grid.className = "grid";
-
-      section.items.forEach(item => {
-        if (item.type === "video") {
-          // --- LOCAL VIDEO PLAYER ---
-          const vid = document.createElement('video');
-          vid.controls = true;
-          vid.muted = true;
-          vid.loop = true;
-          
-          const src = document.createElement('source');
-          src.src = item.src;
-          src.type = 'video/mp4';
-          
-          vid.appendChild(src);
-          grid.appendChild(vid);
-
-        } else if (item.type === "youtube") {
-          // --- YOUTUBE PLAYER ---
-          const iframe = document.createElement('iframe');
-          iframe.src = item.src;
-          iframe.title = "YouTube video player";
-          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-          iframe.allowFullscreen = true;
-          grid.appendChild(iframe);
-
-        } else {
-          // --- IMAGE ---
-          const img = document.createElement('img');
-          img.src = item.src;
-          grid.appendChild(img);
-        }
-      });
-
-      sec.appendChild(grid);
-      portfolio.appendChild(sec);
+    // MEDIA GENERATION
+    let mediaHtml = '';
+    if (item.type === 'youtube') {
+      // Auto-convert standard YT links to Embed if user pasted wrong one
+      let src = item.src;
+      if(src.includes("watch?v=")) src = src.replace("watch?v=", "embed/");
+      if(src.includes("youtu.be/")) src = src.replace("youtu.be/", "www.youtube.com/embed/");
+      
+      mediaHtml = `<iframe src="${src}" allowfullscreen></iframe>`;
+    } else if (item.type === 'video') {
+      mediaHtml = `<video src="${item.src}" controls loop muted></video>`;
+    } else {
+      mediaHtml = `<img src="${item.src}" alt="${item.title}">`;
     }
+
+    // STORE ELEMENTS
+    const priceHtml = item.price ? `<div class="price-tag">$${item.price}</div>` : '';
+    const buyBtn = item.price ? `<button class="btn-buy">Purchase</button>` : '';
+
+    card.innerHTML = `
+      <div class="media-container">
+        ${mediaHtml}
+        ${priceHtml}
+      </div>
+      <div class="card-info">
+        <div class="card-title">${item.title}</div>
+        <div class="card-tag">${item.type.toUpperCase()}</div>
+        ${buyBtn}
+      </div>
+    `;
+    grid.appendChild(card);
   });
 }
 
-searchInput.addEventListener("input", (e) => {
-  renderPortfolio(e.target.value);
-});
+// --- TAB SWITCHING ---
+function switchTab(tab, btnElement) {
+  // Update UI classes
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btnElement.classList.add('active');
+  
+  currentTab = tab;
+  searchInput.value = ""; // clear search
 
-renderPortfolio();
+  if (tab === 'work') {
+    pageTitle.innerText = "Past Work";
+    pageSub.innerText = "Systems and mechanics I've built";
+    grid.classList.remove('hidden');
+    dashPanel.classList.add('hidden');
+    searchInput.style.display = "block";
+    render();
+  } 
+  else if (tab === 'store') {
+    pageTitle.innerText = "Store";
+    pageSub.innerText = "High quality assets for sale";
+    grid.classList.remove('hidden');
+    dashPanel.classList.add('hidden');
+    searchInput.style.display = "block";
+    render();
+  } 
+  else if (tab === 'dashboard') {
+    pageTitle.innerText = "Dashboard";
+    pageSub.innerText = "Manage your content";
+    grid.classList.add('hidden');
+    dashPanel.classList.remove('hidden');
+    searchInput.style.display = "none";
+  }
+}
+
+// --- DASHBOARD LOGIC ---
+function togglePriceInput() {
+  const section = document.getElementById('dash-section').value;
+  const priceGroup = document.getElementById('price-group');
+  if (section === 'store') priceGroup.classList.remove('hidden');
+  else priceGroup.classList.add('hidden');
+}
+
+function addItem() {
+  const section = document.getElementById('dash-section').value;
+  const title = document.getElementById('dash-title').value;
+  const type = document.getElementById('dash-type').value;
+  const src = document.getElementById('dash-src').value;
+  const price = document.getElementById('dash-price').value;
+
+  if (!title || !src) {
+    alert("Please fill in Title and Source Link!");
+    return;
+  }
+
+  const newItem = { title, type, src };
+
+  if (section === 'store') {
+    newItem.price = price || 0;
+    storeData.push(newItem);
+    localStorage.setItem('myStoreData', JSON.stringify(storeData));
+    alert("Item added to Store!");
+  } else {
+    workData.push(newItem);
+    localStorage.setItem('myWorkData', JSON.stringify(workData));
+    alert("Item added to Past Work!");
+  }
+
+  // Clear inputs
+  document.getElementById('dash-title').value = "";
+  document.getElementById('dash-src').value = "";
+}
+
+function handleSearch(val) {
+  render(val);
+}
+
+// Initial Render
+render();
+
 </script>
 </body>
 </html>
