@@ -375,16 +375,18 @@ const defaultStore = [
   { id: 102, title: "Clan War System", type: "image", src: "assets/project2.png", usd: 40, robux: 6000, oldRobux: 8000 }
 ];
 
-// --- INITIALIZATION (Restores defaults if empty) ---
+// --- INITIALIZATION FIX ---
+// Only use defaults if the storage key DOES NOT EXIST (is null).
+// If it exists but is empty [], we respect that it is empty.
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
 
-if (!workData || workData.length === 0) {
+if (workData === null) {
   workData = defaultWork;
   localStorage.setItem('myWorkData', JSON.stringify(workData));
 }
 
-if (!storeData || storeData.length === 0) {
+if (storeData === null) {
   storeData = defaultStore;
   localStorage.setItem('myStoreData', JSON.stringify(storeData));
 }
