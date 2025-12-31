@@ -78,10 +78,11 @@
       display: block;
     }
     
-    /* Make iframe generic aspect ratio match video players */
+    /* Force 16:9 Aspect Ratio for YouTube */
     iframe {
       aspect-ratio: 16 / 9;
       border: none;
+      height: auto; 
     }
 
     video:hover,
@@ -124,7 +125,7 @@ const sections = [
   {
     title: "Combat systems",
     items: [
-      // Updated with your specific YouTube video ID: O73KBqbknt0
+      // CRITICAL: The type must be "youtube", NOT "video"
       { type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" } 
     ]
   }
@@ -148,7 +149,7 @@ function renderPortfolio(filterText = "") {
 
       section.items.forEach(item => {
         if (item.type === "video") {
-          // Handle Local MP4
+          // --- LOCAL VIDEO PLAYER ---
           const vid = document.createElement('video');
           vid.controls = true;
           vid.muted = true;
@@ -162,15 +163,16 @@ function renderPortfolio(filterText = "") {
           grid.appendChild(vid);
 
         } else if (item.type === "youtube") {
-          // Handle YouTube
+          // --- YOUTUBE PLAYER ---
           const iframe = document.createElement('iframe');
           iframe.src = item.src;
+          iframe.title = "YouTube video player";
           iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
           iframe.allowFullscreen = true;
           grid.appendChild(iframe);
 
         } else {
-          // Handle Images
+          // --- IMAGE ---
           const img = document.createElement('img');
           img.src = item.src;
           grid.appendChild(img);
