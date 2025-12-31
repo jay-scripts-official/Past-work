@@ -228,7 +228,7 @@
       gap: 8px; 
     }
 
-    /* Cool Discount Logic */
+    /* Discount Logic */
     .discount-wrapper {
       display: flex;
       align-items: baseline;
@@ -246,7 +246,7 @@
       color: var(--robux-color);
       font-weight: 800;
       font-size: 1.1rem;
-      text-shadow: 0 0 15px rgba(0, 176, 111, 0.6); /* Green Glow */
+      text-shadow: 0 0 15px rgba(0, 176, 111, 0.6);
     }
 
     .sale-badge {
@@ -363,13 +363,32 @@
   </main>
 
 <script>
-// --- DATA LOADING ---
-// Defaults are now EMPTY to allow dashboard full control
-const defaultWork = [];
-const defaultStore = [];
+// --- YOUR ORIGINAL PROJECTS ---
+const defaultWork = [
+  { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
+  { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
+  { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
+];
 
-let workData = JSON.parse(localStorage.getItem('myWorkData')) || defaultWork;
-let storeData = JSON.parse(localStorage.getItem('myStoreData')) || defaultStore;
+const defaultStore = [
+  { id: 101, title: "Rank Management GUI", type: "image", src: "assets/project1.png", usd: 15, robux: 4500 },
+  { id: 102, title: "Clan War System", type: "image", src: "assets/project2.png", usd: 40, robux: 6000, oldRobux: 8000 }
+];
+
+// --- INITIALIZATION (Restores defaults if empty) ---
+let workData = JSON.parse(localStorage.getItem('myWorkData'));
+let storeData = JSON.parse(localStorage.getItem('myStoreData'));
+
+if (!workData || workData.length === 0) {
+  workData = defaultWork;
+  localStorage.setItem('myWorkData', JSON.stringify(workData));
+}
+
+if (!storeData || storeData.length === 0) {
+  storeData = defaultStore;
+  localStorage.setItem('myStoreData', JSON.stringify(storeData));
+}
+
 let currentTab = 'work';
 
 // --- RENDER ---
@@ -412,7 +431,7 @@ function render(filter = "") {
       // Robux Logic
       let robuxDisplay = '';
       if (item.oldRobux && Number(item.oldRobux) > Number(item.robux)) {
-        // DISCOUNT MODE (Glow + Crossed Out)
+        // DISCOUNT MODE
         robuxDisplay = `
           <div class="discount-wrapper">
              <span class="old-price">${item.oldRobux}R</span>
