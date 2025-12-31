@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Apex Covenant Portfolio</title>
+  <title>Past Work</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     /* --- CSS VARIABLES & RESET --- */
@@ -10,7 +10,7 @@
       --bg: #0b0f1a;
       --sidebar-bg: #05080f;
       --card-bg: #131825;
-      --accent: #3b82f6; /* Azure Blue */
+      --accent: #3b82f6; 
       --accent-glow: rgba(59, 130, 246, 0.4);
       --text-main: #ffffff;
       --text-muted: #94a3b8;
@@ -40,6 +40,7 @@
       padding-top: 30px;
       transition: width 0.3s ease;
       z-index: 100;
+      flex-shrink: 0;
     }
 
     .sidebar:hover { width: 240px; }
@@ -74,9 +75,13 @@
       box-shadow: 0 0 15px var(--accent);
     }
 
+    /* FIXED: Force SVG size so they don't get huge */
     .nav-btn svg {
-      min-width: 24px;
+      width: 24px;
+      height: 24px;
+      min-width: 24px; 
       margin-right: 20px;
+      display: block;
     }
 
     .nav-text {
@@ -108,10 +113,25 @@
     h1 { font-size: 3rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 10px; }
     p.subtitle { color: var(--text-muted); font-size: 1.1rem; }
 
+    /* --- SEARCH BAR --- */
+    #search {
+      margin-top: 20px;
+      max-width: 400px;
+      display: block;
+      padding: 12px 20px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 16px;
+      width: 100%;
+    }
+    #search:focus { border-color: var(--accent); }
+
     /* --- GRIDS & CARDS --- */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly smaller cards */
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 25px;
       padding-bottom: 100px;
     }
@@ -125,7 +145,7 @@
       position: relative;
       animation: slideUp 0.5s ease forwards;
       opacity: 0;
-      cursor: pointer; /* Indicates clickability */
+      cursor: pointer;
     }
 
     .card:hover {
@@ -138,10 +158,9 @@
       aspect-ratio: 16/9;
       background: #000;
       position: relative;
-      pointer-events: none; /* Disables interaction with video in grid view */
+      pointer-events: none; 
     }
 
-    /* Overlay to capture clicks on videos/iframes */
     .click-overlay {
       position: absolute;
       top: 0;
@@ -154,7 +173,6 @@
     }
 
     .media-container img, 
-    .media-container video, 
     .media-container iframe {
       width: 100%;
       height: 100%;
@@ -180,7 +198,7 @@
       color: var(--text-muted);
     }
 
-    /* --- LIGHTBOX (EXPAND VIEW) --- */
+    /* --- LIGHTBOX --- */
     .lightbox {
       position: fixed;
       top: 0;
@@ -189,7 +207,7 @@
       height: 100vh;
       background: rgba(0, 0, 0, 0.95);
       z-index: 1000;
-      display: none; /* Hidden by default */
+      display: none;
       justify-content: center;
       align-items: center;
       flex-direction: column;
@@ -197,10 +215,7 @@
       transition: opacity 0.3s ease;
     }
 
-    .lightbox.active {
-      display: flex;
-      opacity: 1;
-    }
+    .lightbox.active { display: flex; opacity: 1; }
 
     .lightbox-content-wrapper {
       width: 80%;
@@ -214,7 +229,6 @@
     }
 
     .lightbox-content-wrapper iframe,
-    .lightbox-content-wrapper video,
     .lightbox-content-wrapper img {
       width: 100%;
       height: 100%;
@@ -233,7 +247,7 @@
     }
     .close-btn:hover { color: var(--accent); }
 
-    /* --- STORE SPECIFIC --- */
+    /* --- PRICE TAG --- */
     .price-tag {
       position: absolute;
       top: 15px;
@@ -261,7 +275,7 @@
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); }
     
-    input, select {
+    input[type="text"], input[type="number"], select {
       width: 100%;
       padding: 14px;
       background: #0b0f1a;
@@ -269,6 +283,16 @@
       border-radius: 10px;
       color: #fff;
       font-size: 1rem;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      background: #0b0f1a;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
     }
 
     input:focus, select:focus { border-color: var(--accent); }
@@ -290,13 +314,8 @@
 
     /* --- ANIMATIONS --- */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { 
-      from { opacity: 0; transform: translateY(20px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-    
-    /* Utilities */
-    .hidden { display: none; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .hidden { display: none !important; }
 
   </style>
 </head>
@@ -304,8 +323,7 @@
 
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <div class="close-btn" onclick="closeLightbox(event)">&times;</div>
-    <div class="lightbox-content-wrapper" id="lightbox-wrapper">
-      </div>
+    <div class="lightbox-content-wrapper" id="lightbox-wrapper"></div>
   </div>
 
   <nav class="sidebar">
@@ -341,8 +359,7 @@
     <header id="page-header">
       <h1 id="page-title">Past Work</h1>
       <p class="subtitle" id="page-subtitle">Systems and mechanics I've built.</p>
-      <input type="text" id="search" placeholder="Search..." 
-             style="margin-top:20px; max-width:400px; display:block;" oninput="handleSearch(this.value)">
+      <input type="text" id="search" placeholder="Search..." oninput="handleSearch(this.value)">
     </header>
 
     <div id="content-grid" class="grid"></div>
@@ -352,7 +369,7 @@
       
       <div class="form-group">
         <label>Section</label>
-        <select id="dash-section" onchange="togglePriceInput()">
+        <select id="dash-section" onchange="updateDashInputs()">
           <option value="work">Past Work</option>
           <option value="store">Store Product</option>
         </select>
@@ -365,19 +382,20 @@
 
       <div class="form-group">
         <label>Media Type</label>
-        <select id="dash-type">
+        <select id="dash-type" onchange="updateDashInputs()">
           <option value="youtube">YouTube Video</option>
-          <option value="video">Uploaded Video (MP4)</option>
-          <option value="image">Image</option>
+          <option value="image">Upload Image</option>
         </select>
       </div>
 
-      <div class="form-group">
-        <label>Source / Link</label>
-        <input type="text" id="dash-src" placeholder="Paste YouTube Link or Image URL">
-        <p style="font-size:0.8rem; color:#666; margin-top:5px;">
-          For YouTube, use the full link. For uploads, we'll convert locally.
-        </p>
+      <div class="form-group" id="url-input-group">
+        <label>YouTube Link</label>
+        <input type="text" id="dash-src" placeholder="Paste YouTube Link">
+      </div>
+
+      <div class="form-group hidden" id="file-input-group">
+        <label>Choose Image</label>
+        <input type="file" id="dash-file" accept="image/png, image/jpeg, image/jpg">
       </div>
 
       <div class="form-group hidden" id="price-group">
@@ -391,11 +409,13 @@
   </main>
 
 <script>
-// --- INITIAL DATA (Default) ---
+// --- CONFIG ---
+const ADMIN_PASSWORD = "admin"; // <--- CHANGE THIS PASSWORD
+
+// --- DATA ---
 const defaultWork = [
   { title: "Simple Systems", type: "image", src: "assets/project1.png" },
   { title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
-  { title: "Dash Mechanic", type: "video", src: "assets/movement/dash.mp4" },
   { title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
 ];
 
@@ -404,12 +424,11 @@ const defaultStore = [
   { title: "Clan War System", type: "image", src: "assets/project2.png", price: 40 }
 ];
 
-// Load from LocalStorage or use Defaults
 let workData = JSON.parse(localStorage.getItem('myWorkData')) || defaultWork;
 let storeData = JSON.parse(localStorage.getItem('myStoreData')) || defaultStore;
 let currentTab = 'work';
 
-// --- RENDER FUNCTION ---
+// --- RENDER ---
 const grid = document.getElementById('content-grid');
 const dashPanel = document.getElementById('dashboard-panel');
 const pageTitle = document.getElementById('page-title');
@@ -418,39 +437,30 @@ const searchInput = document.getElementById('search');
 
 function render(filter = "") {
   grid.innerHTML = "";
-  
   let dataToRender = currentTab === 'work' ? workData : storeData;
-  
-  // Filter
   const term = filter.toLowerCase();
-  const filtered = dataToRender.filter(item => item.title.toLowerCase().includes(term));
-
-  filtered.forEach((item, index) => {
+  
+  dataToRender.filter(item => item.title.toLowerCase().includes(term)).forEach((item, index) => {
     const card = document.createElement('div');
     card.className = "card";
     card.style.animationDelay = `${index * 0.1}s`;
-    
-    // Add Click event to Open Lightbox
-    // We pass the type and src to the function
     card.onclick = () => openLightbox(item.type, item.src);
 
-    // MEDIA GENERATION
     let mediaHtml = '';
     if (item.type === 'youtube') {
       let src = item.src;
+      // Safety convert to embed if user pasted standard link
       if(src.includes("watch?v=")) src = src.replace("watch?v=", "embed/");
       if(src.includes("youtu.be/")) src = src.replace("youtu.be/", "www.youtube.com/embed/");
+      // Strip params if not embed
+      if(!src.includes("/embed/")) { /* fallback logic if needed */ }
+      
       mediaHtml = `<iframe src="${src}" allowfullscreen></iframe>`;
-    } else if (item.type === 'video') {
-      mediaHtml = `<video src="${item.src}" muted></video>`;
     } else {
       mediaHtml = `<img src="${item.src}" alt="${item.title}">`;
     }
 
-    // STORE ELEMENTS
     const priceHtml = item.price ? `<div class="price-tag">$${item.price}</div>` : '';
-    // Note: Removed buy button from card grid to keep it clean, 
-    // we can add it to the lightbox or just keep price tag.
 
     card.innerHTML = `
       <div class="media-container">
@@ -467,40 +477,19 @@ function render(filter = "") {
   });
 }
 
-// --- LIGHTBOX FUNCTIONS ---
-const lightbox = document.getElementById('lightbox');
-const lightboxWrapper = document.getElementById('lightbox-wrapper');
-
-function openLightbox(type, src) {
-  lightboxWrapper.innerHTML = ""; // Clear previous content
-  
-  if (type === 'youtube') {
-    // Add autoplay to URL
-    let autoSrc = src + "?autoplay=1"; 
-    lightboxWrapper.innerHTML = `<iframe src="${autoSrc}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-  } else if (type === 'video') {
-    lightboxWrapper.innerHTML = `<video src="${src}" controls autoplay loop style="width:100%; height:100%"></video>`;
-  } else {
-    lightboxWrapper.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:contain;">`;
-  }
-  
-  lightbox.classList.add('active');
-}
-
-function closeLightbox(e) {
-  // Close if clicked on background or close button, but NOT the content wrapper
-  if (e.target !== lightboxWrapper && !lightboxWrapper.contains(e.target)) {
-    lightbox.classList.remove('active');
-    // Stop video playback by clearing content
-    setTimeout(() => { lightboxWrapper.innerHTML = ""; }, 300);
-  }
-}
-
-// --- TAB SWITCHING ---
+// --- TABS & SECURITY ---
 function switchTab(tab, btnElement) {
+  // Security Check for Dashboard
+  if (tab === 'dashboard') {
+    const password = prompt("Please enter admin password:");
+    if (password !== ADMIN_PASSWORD) {
+      alert("Incorrect Password!");
+      return;
+    }
+  }
+
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   btnElement.classList.add('active');
-  
   currentTab = tab;
   searchInput.value = ""; 
 
@@ -529,28 +518,81 @@ function switchTab(tab, btnElement) {
   }
 }
 
+// --- LIGHTBOX ---
+const lightbox = document.getElementById('lightbox');
+const lightboxWrapper = document.getElementById('lightbox-wrapper');
+
+function openLightbox(type, src) {
+  lightboxWrapper.innerHTML = "";
+  if (type === 'youtube') {
+    let autoSrc = src.includes("?") ? src + "&autoplay=1" : src + "?autoplay=1";
+    lightboxWrapper.innerHTML = `<iframe src="${autoSrc}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  } else {
+    lightboxWrapper.innerHTML = `<img src="${src}">`;
+  }
+  lightbox.classList.add('active');
+}
+
+function closeLightbox(e) {
+  if (e.target !== lightboxWrapper && !lightboxWrapper.contains(e.target)) {
+    lightbox.classList.remove('active');
+    setTimeout(() => { lightboxWrapper.innerHTML = ""; }, 300);
+  }
+}
+
 // --- DASHBOARD LOGIC ---
-function togglePriceInput() {
+function updateDashInputs() {
+  const type = document.getElementById('dash-type').value;
   const section = document.getElementById('dash-section').value;
+  
+  // Toggle Price
   const priceGroup = document.getElementById('price-group');
   if (section === 'store') priceGroup.classList.remove('hidden');
   else priceGroup.classList.add('hidden');
+
+  // Toggle Source Inputs
+  const urlGroup = document.getElementById('url-input-group');
+  const fileGroup = document.getElementById('file-input-group');
+  
+  if (type === 'image') {
+    urlGroup.classList.add('hidden');
+    fileGroup.classList.remove('hidden');
+  } else {
+    urlGroup.classList.remove('hidden');
+    fileGroup.classList.add('hidden');
+  }
 }
 
 function addItem() {
   const section = document.getElementById('dash-section').value;
   const title = document.getElementById('dash-title').value;
   const type = document.getElementById('dash-type').value;
-  const src = document.getElementById('dash-src').value;
   const price = document.getElementById('dash-price').value;
 
-  if (!title || !src) {
-    alert("Please fill in Title and Source Link!");
-    return;
+  if (!title) { alert("Please enter a title!"); return; }
+
+  // Handle Image Upload vs YouTube URL
+  if (type === 'image') {
+    const fileInput = document.getElementById('dash-file');
+    if (fileInput.files && fileInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        saveItem(section, title, type, e.target.result, price);
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      alert("Please choose an image file!");
+    }
+  } else {
+    const src = document.getElementById('dash-src').value;
+    if (!src) { alert("Please paste a YouTube link!"); return; }
+    saveItem(section, title, type, src, price);
   }
+}
 
+function saveItem(section, title, type, src, price) {
   const newItem = { title, type, src };
-
+  
   if (section === 'store') {
     newItem.price = price || 0;
     storeData.push(newItem);
@@ -562,14 +604,13 @@ function addItem() {
     alert("Item added to Past Work!");
   }
 
-  // Clear inputs
+  // Reset inputs
   document.getElementById('dash-title').value = "";
   document.getElementById('dash-src').value = "";
+  document.getElementById('dash-file').value = "";
 }
 
-function handleSearch(val) {
-  render(val);
-}
+function handleSearch(val) { render(val); }
 
 // Initial Render
 render();
