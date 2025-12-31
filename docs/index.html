@@ -29,7 +29,7 @@
       overflow: hidden;
     }
 
-    /* SIDEBAR */
+    /* SIDEBAR - Fixed Scrollbar Glitch */
     .sidebar {
       width: 80px;
       background: var(--sidebar-bg);
@@ -41,6 +41,7 @@
       transition: width 0.3s ease;
       z-index: 100;
       flex-shrink: 0;
+      overflow: hidden; /* <--- KILLS THE WHITE BAR */
     }
 
     .sidebar:hover { width: 240px; }
@@ -105,11 +106,7 @@
       position: relative;
     }
 
-    header {
-      margin-bottom: 50px;
-      animation: fadeIn 0.6s ease;
-    }
-
+    header { margin-bottom: 50px; animation: fadeIn 0.6s ease; }
     h1 { font-size: 3rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 10px; }
     p.subtitle { color: var(--text-muted); font-size: 1.1rem; }
 
@@ -329,7 +326,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
       <span class="nav-text">Store</span>
     </div>
-
+  </nav>
 
   <main class="main-content">
     <header id="page-header">
@@ -342,7 +339,6 @@
   </main>
 
 <script>
-// --- DEFAULTS ---
 const defaultWork = [
   { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
   { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
@@ -354,9 +350,6 @@ const defaultStore = [
   { id: 102, title: "Clan War System", type: "image", src: "assets/project2.png", usd: 40, robux: 6000, oldRobux: 8000 }
 ];
 
-// --- INITIAL LOAD FIX ---
-// ONLY load defaults if storage is NULL (never visited).
-// If storage is [] (empty list), we keep it empty.
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
 
@@ -370,8 +363,6 @@ if (storeData === null) {
 }
 
 let currentTab = 'work';
-
-// --- RENDER ---
 const grid = document.getElementById('content-grid');
 const pageTitle = document.getElementById('page-title');
 const pageSub = document.getElementById('page-subtitle');
@@ -381,7 +372,6 @@ function render(filter = "") {
   grid.innerHTML = "";
   let dataToRender = currentTab === 'work' ? workData : storeData;
   const term = filter.toLowerCase();
-  
   const items = dataToRender.filter(item => item.title.toLowerCase().includes(term));
 
   if (items.length === 0) {
@@ -395,50 +385,29 @@ function render(filter = "") {
     card.style.animationDelay = `${index * 0.1}s`;
     card.onclick = () => openLightbox(item.type, item.src);
 
-    let mediaHtml = '';
-    if (item.type === 'youtube') {
-      let src = item.src;
-      if(src.includes("watch?v=")) src = src.replace("watch?v=", "embed/");
-      if(src.includes("youtu.be/")) src = src.replace("youtu.be/", "www.youtube.com/embed/");
-      mediaHtml = `<iframe src="${src}" allowfullscreen></iframe>`;
-    } else {
-      mediaHtml = `<img src="${item.src}" alt="${item.title}">`;
-    }
+    let mediaHtml = item.type === 'youtube' 
+      ? `<iframe src="${item.src.includes('watch?v=') ? item.src.replace('watch?v=', 'embed/') : item.src}" allowfullscreen></iframe>`
+      : `<img src="${item.src}" alt="${item.title}">`;
 
     let priceHtml = '';
     if (currentTab === 'store') {
       let robuxDisplay = '';
       if (item.oldRobux && Number(item.oldRobux) > Number(item.robux)) {
-        robuxDisplay = `
-          <div class="discount-wrapper">
-             <span class="old-price">${item.oldRobux}R</span>
-             <span class="new-price">${item.robux}R</span>
-             <span class="sale-badge">SALE</span>
-          </div>
-        `;
+        robuxDisplay = `<div class="discount-wrapper"><span class="old-price">${item.oldRobux}R</span><span class="new-price">${item.robux}R</span><span class="sale-badge">SALE</span></div>`;
       } else {
         robuxDisplay = `<span style="color:var(--robux-color); font-weight:700;">${item.robux || '0'}R</span>`;
       }
 
       priceHtml = `
         <div class="price-container">
-          <div class="price-row">
-             <span style="color:#94a3b8;">Money</span>
-             <span class="usd-price">$${item.usd || '0.00'}</span>
-          </div>
-          <div class="price-row">
-             <span style="color:#94a3b8;">Robux</span>
-             <div class="robux-price">${robuxDisplay}</div>
-          </div>
+          <div class="price-row"><span style="color:#94a3b8;">Money</span><span class="usd-price">$${item.usd || '0.00'}</span></div>
+          <div class="price-row"><span style="color:#94a3b8;">Robux</span><div class="robux-price">${robuxDisplay}</div></div>
         </div>
       `;
     }
 
     card.innerHTML = `
-      <div class="media-container">
-        ${mediaHtml}
-        <div class="click-overlay"></div> 
-      </div>
+      <div class="media-container">${mediaHtml}<div class="click-overlay"></div></div>
       <div class="card-info">
         <div class="card-title">${item.title}</div>
         <div class="card-tag">${item.type.toUpperCase()}</div>
@@ -470,33 +439,23 @@ function switchTab(tab, btnElement) {
 
 const lightbox = document.getElementById('lightbox');
 const lightboxWrapper = document.getElementById('lightbox-wrapper');
-
 function openLightbox(type, src) {
-  lightboxWrapper.innerHTML = "";
-  if (type === 'youtube') {
-    let autoSrc = src.includes("?") ? src + "&autoplay=1" : src + "?autoplay=1";
-    lightboxWrapper.innerHTML = `<iframe src="${autoSrc}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-  } else {
-    lightboxWrapper.innerHTML = `<img src="${src}">`;
-  }
+  lightboxWrapper.innerHTML = type === 'youtube' 
+    ? `<iframe src="${src.includes('?') ? src + '&autoplay=1' : src + '?autoplay=1'}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`
+    : `<img src="${src}">`;
   lightbox.classList.add('active');
 }
-
 function closeLightbox(e) {
   if (e.target !== lightboxWrapper && !lightboxWrapper.contains(e.target)) {
     lightbox.classList.remove('active');
     setTimeout(() => { lightboxWrapper.innerHTML = ""; }, 300);
   }
 }
-
 function handleSearch(val) { render(val); }
 
 window.addEventListener('storage', (e) => {
-  if (e.key === 'force_refresh_trigger') {
-    location.reload();
-  }
+  if (e.key === 'force_refresh_trigger') location.reload();
 });
-
 render();
 </script>
 </body>
