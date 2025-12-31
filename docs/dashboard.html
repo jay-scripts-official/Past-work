@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <style>
+    :root {
+      --bg: #05080f;
+      --panel: #0f131f;
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #3b82f6;
+      --danger: #ef4444;
+      --text: #ffffff;
+      --font: system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; font-family: var(--font); outline: none; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      gap: 40px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .editor-section {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .preview-section {
+      width: 400px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 { margin: 0 0 10px 0; font-size: 24px; letter-spacing: -1px; }
+    h2 { font-size: 18px; color: #94a3b8; margin-bottom: 20px; font-weight: 500; }
+
+    .form-group { margin-bottom: 25px; }
+    label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    input, select {
+      width: 100%;
+      padding: 16px;
+      background: #05080f;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .row { display: flex; gap: 20px; }
+    .col { flex: 1; }
+
+    input[type="file"] { padding: 12px; cursor: pointer; }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary { background: var(--accent); color: white; margin-top: 10px; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); }
+
+    .btn-refresh { background: #10b981; color: white; margin-top: auto; }
+    .btn-refresh:hover { background: #059669; }
+
+    .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 8px 16px; font-size: 14px; width: auto; }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+
+    .item-list { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
+    
+    .list-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px; background: rgba(255,255,255,0.02);
+      border-radius: 8px; margin-bottom: 10px;
+    }
+    .list-info { display: flex; align-items: center; gap: 15px; }
+    .list-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: #000; }
+    .list-title { font-weight: 600; }
+    .list-meta { font-size: 12px; color: #64748b; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="editor-section">
+    <h1>Admin Dashboard</h1>
+    <h2>Content Management System</h2>
+
+    <div class="form-group">
+      <label>Target Section</label>
+      <select id="inp-section" onchange="toggleInputs()">
+        <option value="work">Past Work</option>
+        <option value="store">Store</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Project / Product Title</label>
+      <input type="text" id="inp-title" placeholder="e.g. Advanced Gun Engine">
+    </div>
+
+    <div class="form-group">
+      <label>Media Type</label>
+      <select id="inp-type" onchange="toggleInputs()">
+        <option value="youtube">YouTube Video</option>
+        <option value="image">Upload Image</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="group-url">
+      <label>YouTube Link</label>
+      <input type="text" id="inp-src" placeholder="Paste full YouTube link here">
+    </div>
+
+    <div class="form-group hidden" id="group-file">
+      <label>Image File (Max 2MB)</label>
+      <input type="file" id="inp-file" accept="image/*">
+    </div>
+
+    <div class="hidden" id="group-pricing">
+      <div class="form-group">
+        <label>Price (USD)</label>
+        <input type="number" id="inp-usd" placeholder="15">
+      </div>
+      
+      <div class="row">
+        <div class="col form-group">
+           <label>Sale Robux Price</label>
+           <input type="number" id="inp-robux" placeholder="6000">
+        </div>
+        <div class="col form-group">
+           <label>Original Robux (For Discount)</label>
+           <input type="number" id="inp-robux-orig" placeholder="8000 (Optional)">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="addItem()">+ ADD TO DATABASE</button>
+
+    <div class="item-list">
+      <label>Manage Existing Items</label>
+      <div id="list-container"></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <h1>System Status</h1>
+    <h2 style="color: #10b981;">Online</h2>
+    
+    <p style="color:#64748b; font-size:14px; line-height:1.6;">
+      This dashboard controls the main website. Add items here and press "Refresh Website" to see changes live.
+    </p>
+
+    <div style="margin-top:20px; padding:20px; background:rgba(59,130,246,0.1); border-radius:12px; border:1px solid rgba(59,130,246,0.2);">
+      <strong style="color:var(--accent); display:block; margin-bottom:5px;">Data Sync</strong>
+      <span style="font-size:13px; opacity:0.7">Local Storage connection active.</span>
+    </div>
+
+    <button class="btn btn-refresh" onclick="forceRefresh()">⚡ REFRESH WEBSITE</button>
+
+    <button style="margin-top:20px; background:#1f2937; color:#ef4444; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="hardReset()">Factory Reset (Delete All)</button>
+  </div>
+
+<script>
+// --- INITIALIZATION ---
+// Match index.html: defaults only if NULL.
+const defaultWork = [
+  { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
+  { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
+  { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
+];
+
+const defaultStore = [
+  { id: 101, title: "Rank Management GUI", type: "image", src: "assets/project1.png", usd: 15, robux: 4500 },
+  { id: 102, title: "Clan War System", type: "image", src: "assets/project2.png", usd: 40, robux: 6000, oldRobux: 8000 }
+];
+
+let workData = JSON.parse(localStorage.getItem('myWorkData'));
+let storeData = JSON.parse(localStorage.getItem('myStoreData'));
+
+if (workData === null) {
+  workData = defaultWork;
+  localStorage.setItem('myWorkData', JSON.stringify(workData));
+}
+if (storeData === null) {
+  storeData = defaultStore;
+  localStorage.setItem('myStoreData', JSON.stringify(storeData));
+}
+
+function toggleInputs() {
+  const section = document.getElementById('inp-section').value;
+  const type = document.getElementById('inp-type').value;
+
+  document.getElementById('group-pricing').classList.toggle('hidden', section !== 'store');
+
+  if (type === 'image') {
+    document.getElementById('group-url').classList.add('hidden');
+    document.getElementById('group-file').classList.remove('hidden');
+  } else {
+    document.getElementById('group-url').classList.remove('hidden');
+    document.getElementById('group-file').classList.add('hidden');
+  }
+}
+
+function addItem() {
+  const section = document.getElementById('inp-section').value;
+  const title = document.getElementById('inp-title').value;
+  const type = document.getElementById('inp-type').value;
+  
+  const usd = document.getElementById('inp-usd').value;
+  const robux = document.getElementById('inp-robux').value;
+  const oldRobux = document.getElementById('inp-robux-orig').value;
+  
+  if (!title) return alert("Title required");
+
+  if (type === 'image') {
+    const fileInput = document.getElementById('inp-file');
+    const file = fileInput.files[0];
+    if (!file) return alert("Select an image");
+    
+    // 2MB Limit
+    if (file.size > 2 * 1024 * 1024) {
+      return alert("File is too large! Max size is 2MB.");
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      saveToStorage(section, title, type, e.target.result, usd, robux, oldRobux);
+    };
+    reader.onerror = function() { alert("Error reading file."); }
+    reader.readAsDataURL(file);
+  } else {
+    const src = document.getElementById('inp-src').value;
+    if (!src) return alert("Enter YouTube URL");
+    saveToStorage(section, title, type, src, usd, robux, oldRobux);
+  }
+}
+
+function saveToStorage(section, title, type, src, usd, robux, oldRobux) {
+  const item = { id: Date.now(), title, type, src };
+  
+  if (section === 'store') {
+    item.usd = usd || 0;
+    item.robux = robux || 0;
+    if(oldRobux) item.oldRobux = oldRobux; 
+    storeData.push(item);
+    localStorage.setItem('myStoreData', JSON.stringify(storeData));
+  } else {
+    workData.push(item);
+    localStorage.setItem('myWorkData', JSON.stringify(workData));
+  }
+  
+  alert("Item Saved!");
+  renderList();
+  
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-src').value = '';
+  document.getElementById('inp-file').value = '';
+  document.getElementById('inp-usd').value = '';
+  document.getElementById('inp-robux').value = '';
+  document.getElementById('inp-robux-orig').value = '';
+}
+
+function deleteItem(id, section) {
+  if(!confirm("Delete this item?")) return;
+
+  if (section === 'store') {
+    storeData = storeData.filter(i => i.id !== id);
+    localStorage.setItem('myStoreData', JSON.stringify(storeData));
+  } else {
+    workData = workData.filter(i => i.id !== id);
+    localStorage.setItem('myWorkData', JSON.stringify(workData));
+  }
+  renderList();
+}
+
+function forceRefresh() {
+  localStorage.setItem('force_refresh_trigger', Date.now());
+  alert("Refresh signal sent to website.");
+}
+
+function hardReset() {
+  if(confirm("Warning: This will delete ALL data and restore defaults. Continue?")) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+function renderList() {
+  const container = document.getElementById('list-container');
+  container.innerHTML = '';
+  
+  const allItems = [
+    ...workData.map(i => ({...i, sec:'work'})), 
+    ...storeData.map(i => ({...i, sec:'store'}))
+  ];
+
+  allItems.forEach(item => {
+    let thumb = item.type === 'youtube' ? 'https://img.youtube.com/vi/MQ.jpg' : item.src;
+    if (item.type === 'youtube') {
+      try {
+        let vidId = item.src.split('embed/')[1];
+        if(!vidId && item.src.includes('v=')) vidId = item.src.split('v=')[1].split('&')[0];
+        if(vidId) thumb = `https://img.youtube.com/vi/${vidId}/default.jpg`;
+      } catch(e){}
+    }
+
+    const div = document.createElement('div');
+    div.className = 'list-row';
+    div.innerHTML = `
+      <div class="list-info">
+        <img src="${thumb}" class="list-thumb">
+        <div>
+          <div class="list-title">${item.title}</div>
+          <div class="list-meta">${item.sec.toUpperCase()} • ${item.type}</div>
+        </div>
+      </div>
+      <button class="btn btn-danger" onclick="deleteItem(${item.id}, '${item.sec}')">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+renderList();
+</script>
+</body>
+</html>
