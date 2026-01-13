@@ -339,29 +339,37 @@
   </main>
 
 <script>
-// IMPORTANT: I have emptied this array so the products are gone by default.
+// --- VERSION CONTROL (Forces Reset) ---
+// This number forces everyone's browser to reset if they have old data.
+// Since you had issues, I am setting this to 2 to ensure a wipe.
+const DATA_VERSION = 2; 
+
 const defaultWork = [
   { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
   { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
   { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
 ];
 
-const defaultStore = []; // EMPTY NOW
+const defaultStore = []; // EMPTY
 
+// Check user's saved version
+const savedVersion = localStorage.getItem('dataVersion');
+
+// If user has no version OR version is old, we WIPE everything.
+if (!savedVersion || Number(savedVersion) < DATA_VERSION) {
+  console.log("Old data detected. Wiping and resetting to empty.");
+  localStorage.setItem('myWorkData', JSON.stringify(defaultWork));
+  localStorage.setItem('myStoreData', JSON.stringify(defaultStore));
+  localStorage.setItem('dataVersion', DATA_VERSION);
+}
+
+// Now we load.
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
 
-if (workData === null) {
-  workData = defaultWork;
-  localStorage.setItem('myWorkData', JSON.stringify(workData));
-}
-
-// We check if it is null OR if it has the old products, we force a reset if you want.
-// For now, new users will see an empty store.
-if (storeData === null) {
-  storeData = defaultStore;
-  localStorage.setItem('myStoreData', JSON.stringify(storeData));
-}
+// Fallback just in case something fails
+if (!workData) workData = defaultWork;
+if (!storeData) storeData = defaultStore;
 
 let currentTab = 'work';
 const grid = document.getElementById('content-grid');
@@ -374,7 +382,6 @@ function render(filter = "") {
   let dataToRender = currentTab === 'work' ? workData : storeData;
   const term = filter.toLowerCase();
   
-  // Safety check if data is null
   if (!dataToRender) dataToRender = [];
 
   const items = dataToRender.filter(item => item.title.toLowerCase().includes(term));
@@ -462,7 +469,6 @@ window.addEventListener('storage', (e) => {
   if (e.key === 'force_refresh_trigger') location.reload();
 });
 
-// Initial Render
 render();
 </script>
 </body>
