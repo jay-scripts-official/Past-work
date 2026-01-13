@@ -339,9 +339,7 @@
   </main>
 
 <script>
-// --- VERSION CONTROL (Forces Reset) ---
-// This number forces everyone's browser to reset if they have old data.
-// Since you had issues, I am setting this to 2 to ensure a wipe.
+// --- VERSION CONTROL ---
 const DATA_VERSION = 2; 
 
 const defaultWork = [
@@ -355,7 +353,6 @@ const defaultStore = []; // EMPTY
 // Check user's saved version
 const savedVersion = localStorage.getItem('dataVersion');
 
-// If user has no version OR version is old, we WIPE everything.
 if (!savedVersion || Number(savedVersion) < DATA_VERSION) {
   console.log("Old data detected. Wiping and resetting to empty.");
   localStorage.setItem('myWorkData', JSON.stringify(defaultWork));
@@ -367,7 +364,6 @@ if (!savedVersion || Number(savedVersion) < DATA_VERSION) {
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
 
-// Fallback just in case something fails
 if (!workData) workData = defaultWork;
 if (!storeData) storeData = defaultStore;
 
@@ -473,4 +469,3 @@ render();
 </script>
 </body>
 </html>
- 
