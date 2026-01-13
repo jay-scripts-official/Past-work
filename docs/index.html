@@ -29,7 +29,7 @@
       overflow: hidden;
     }
 
-    /* SIDEBAR - Fixed Scrollbar Glitch */
+    /* SIDEBAR */
     .sidebar {
       width: 80px;
       background: var(--sidebar-bg);
@@ -41,7 +41,7 @@
       transition: width 0.3s ease;
       z-index: 100;
       flex-shrink: 0;
-      overflow: hidden; /* <--- KILLS THE WHITE BAR */
+      overflow: hidden; 
     }
 
     .sidebar:hover { width: 240px; }
@@ -339,16 +339,14 @@
   </main>
 
 <script>
+// IMPORTANT: I have emptied this array so the products are gone by default.
 const defaultWork = [
   { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
   { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
   { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
 ];
 
-const defaultStore = [
-  { id: 101, title: "Rank Management GUI", type: "image", src: "assets/project1.png", usd: 15, robux: 4500 },
-  { id: 102, title: "Clan War System", type: "image", src: "assets/project2.png", usd: 40, robux: 6000, oldRobux: 8000 }
-];
+const defaultStore = []; // EMPTY NOW
 
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
@@ -357,6 +355,9 @@ if (workData === null) {
   workData = defaultWork;
   localStorage.setItem('myWorkData', JSON.stringify(workData));
 }
+
+// We check if it is null OR if it has the old products, we force a reset if you want.
+// For now, new users will see an empty store.
 if (storeData === null) {
   storeData = defaultStore;
   localStorage.setItem('myStoreData', JSON.stringify(storeData));
@@ -372,6 +373,10 @@ function render(filter = "") {
   grid.innerHTML = "";
   let dataToRender = currentTab === 'work' ? workData : storeData;
   const term = filter.toLowerCase();
+  
+  // Safety check if data is null
+  if (!dataToRender) dataToRender = [];
+
   const items = dataToRender.filter(item => item.title.toLowerCase().includes(term));
 
   if (items.length === 0) {
@@ -456,6 +461,8 @@ function handleSearch(val) { render(val); }
 window.addEventListener('storage', (e) => {
   if (e.key === 'force_refresh_trigger') location.reload();
 });
+
+// Initial Render
 render();
 </script>
 </body>
