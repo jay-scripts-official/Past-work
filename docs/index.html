@@ -5,7 +5,7 @@
   <title>Past Work</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {  
+    :root {
       --bg: #0b0f1a;
       --sidebar-bg: #05080f;
       --card-bg: #131825;
@@ -26,7 +26,7 @@
       font-family: var(--font-stack);
       display: flex;
       height: 100vh;
-      overflow: hidden; 
+      overflow: hidden;
     }
 
     /* SIDEBAR */
@@ -340,27 +340,31 @@
 
 <script>
 // --- VERSION CONTROL ---
-const DATA_VERSION = 2; 
+// I bumped this to 3 so your browser detects the new projects!
+const DATA_VERSION = 3; 
 
 const defaultWork = [
   { id: 1, title: "Simple Systems", type: "image", src: "assets/project1.png" },
-  { id: 2, title: "Grand Marshal UI", type: "image", src: "assets/project2.png" },
-  { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" }
+  { id: 2, title: "Big Systems", type: "image", src: "assets/project2.png" },
+  { id: 3, title: "Combat System", type: "youtube", src: "https://www.youtube.com/embed/O73KBqbknt0" },
+  { id: 4, title: "Working Bike Script", type: "image", src: "assets/project3.png" },
+  { id: 5, title: "Module Scripts", type: "image", src: "assets/project4.png" }
 ];
 
-const defaultStore = []; // EMPTY
+const defaultStore = []; // Empty by default
 
 // Check user's saved version
 const savedVersion = localStorage.getItem('dataVersion');
 
+// If version is old or missing, WIPE and load fresh data
 if (!savedVersion || Number(savedVersion) < DATA_VERSION) {
-  console.log("Old data detected. Wiping and resetting to empty.");
+  console.log("New version detected. Updating data...");
   localStorage.setItem('myWorkData', JSON.stringify(defaultWork));
   localStorage.setItem('myStoreData', JSON.stringify(defaultStore));
   localStorage.setItem('dataVersion', DATA_VERSION);
 }
 
-// Now we load.
+// Load Data
 let workData = JSON.parse(localStorage.getItem('myWorkData'));
 let storeData = JSON.parse(localStorage.getItem('myStoreData'));
 
